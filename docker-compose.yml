@@ -1,0 +1,39 @@
+version: "3"
+services:
+  database:
+    image: mysql:8
+    volumes:
+      - ./data/database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "rootpassword"
+      MYSQL_DATABASE: "new_pharmacy_db"
+      MYSQL_USER: "directus"
+      MYSQL_PASSWORD: "directus"
+
+  directus:
+    image: directus/directus:11.0.2
+    ports:
+      - 8055:8055
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      DB_CLIENT: "mysql"
+      DB_HOST: "database"
+      DB_PORT: "3306"
+      DB_DATABASE: "new_pharmacy_db"
+      DB_USER: "root"
+      DB_PASSWORD: "rootpassword"
+      SECRET: "health-directus-secret"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "directus"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
